@@ -1,0 +1,58 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.item-card {
+    border: 1px solid #ccc;
+    margin: 10px;
+    padding: 10px;
+    display: inline-block;
+    width: 30%;
+}
+
+.product-card__image img {
+    width: 100%;
+    height: auto;
+}
+
+.product-card__details__name {
+    font-size: 18px;
+    color: #333;
+}
+
+.product-card__details__price {
+    font-size: 16px;
+    color: green;
+}
+
+.product-card__details__price__discount-price strike {
+    color: red;
+}
+
+.product-card__details__vendor {
+    font-size: 14px;
+    color: #666;
+}
+
+.btn {
+    padding: 8px 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    cursor: pointer;
+}
+
+.primary-btn {
+    background-color: #0056b3;
+}
+
+.card-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
