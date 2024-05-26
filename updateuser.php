@@ -1,64 +1,58 @@
 <?php
 include("connection.php");
+if(isset($_GET['email'])){
+$Temail=$_GET['email'];
+//$PASS=md5('Password1');
+$PASS='Password1';
+$password = md5($PASS);
+$isdisable='false';
+$Trole='trader';
+$updateVcodeSql = "UPDATE USERS SET PASSWORD=:passwords,IS_DISABLED=:isdisable WHERE EMAIL=:email and USER_ROLE=:role_user";
+$stidVcodeUpdate = oci_parse($conn,$updateVcodeSql);
+oci_bind_by_name($stidVcodeUpdate, ':passwords', $password);
+oci_bind_by_name($stidVcodeUpdate, ':email', $Temail);
+oci_bind_by_name($stidVcodeUpdate, ':role_user', $Trole);
+oci_bind_by_name($stidVcodeUpdate, ':isdisable', $isdisable);
+oci_execute($stidVcodeUpdate, OCI_COMMIT_ON_SUCCESS);
 
-function updateUserCredentials($conn, $email, $password, $isDisabled, $role) {
-    $updateSql = "UPDATE USERS SET PASSWORD=:passwords, IS_DISABLED=:isDisabled WHERE EMAIL=:email AND USER_ROLE=:role";
-    $stmt = oci_parse($conn, $updateSql);
-    oci_bind_by_name($stmt, ':passwords', $password);
-    oci_bind_by_name($stmt, ':isDisabled', $isDisabled);
-    oci_bind_by_name($stmt, ':email', $email);
-    oci_bind_by_name($stmt, ':role', $role);
-    oci_execute($stmt, OCI_COMMIT_ON_SUCCESS);
-}
+$approved='Yes';
+$select="select * from users where email=:email";
+$stid=(oci_parse($conn,$select));
+oci_bind_by_name($stid, ':email', $Temail);
+oci_execute($stid,OCI_COMMIT_ON_SUCCESS);  
+while (($rowname = oci_fetch_object($stid))!= false) {
+    $userid= $rowname->USER_ID;   
+$updateidSql = "UPDATE SHOP_REQUEST SET IS_APPROVED=:approved WHERE USER_ID=:userid";
+$stididUpdate = oci_parse($conn,$updateidSql);
+oci_bind_by_name($stididUpdate, ':userid', $userid);
+oci_bind_by_name($stididUpdate, ':approved', $approved);
+oci_execute($stididUpdate, OCI_COMMIT_ON_SUCCESS);
+oci_commit($conn);
+oci_free_statement($stididUpdate);
 
-function approveTraderRequests($conn, $email) {
-    $selectSql = "SELECT USER_ID FROM USERS WHERE EMAIL=:email";
-    $stmt = oci_parse($conn, $selectSql);
-    oci_bind_by_name($stmt, ':email', $email);
-    oci_execute($stmt, OCI_DEFAULT);
+ // Retrieve the SHOP_REQUEST_ID of the updated row
+    $selectSql = "SELECT SHOP_REQUEST_ID FROM SHOP_REQUEST WHERE USER_ID=:userid";
+    $stidSelect = oci_parse($conn, $selectSql);
+    oci_bind_by_name($stidSelect, ':userid', $userid);
+    oci_execute($stidSelect);
 
-    while (($row = oci_fetch_object($stmt)) != false) {
-        $userId = $row->USER_ID;
-        $updateRequestSql = "UPDATE SHOP_REQUEST SET IS_APPROVED='true' WHERE USER_ID=:userId";
-        $updateStmt = oci_parse($conn, $updateRequestSql);
-        oci_bind_by_name($updateStmt, ':userId', $userId);
-        oci_execute($updateStmt, OCI_COMMIT_ON_SUCCESS);
+    $shopRequestId = null;
+    if ($row = oci_fetch_assoc($stidSelect)) {
+        $shopRequestId = $row['SHOP_REQUEST_ID'];
     }
-    oci_commit($conn);
+    oci_free_statement($stidSelect);
+
+    $updateshop = "INSERT INTO SHOP (SHOP_REQUEST_ID) VALUES (:shop_id)";
+$stdiupdateshop = oci_parse($conn, $updateshop);
+oci_bind_by_name($stdiupdateshop, ':shop_id', $shopRequestId);  // Corrected function name
+oci_execute($stdiupdateshop);
+oci_free_statement($stdiupdateshop);
+oci_close($conn);
+
+
+
+
+echo "You have accepted this trader account";
 }
-
-if (isset($_GET['email'])) {
-    $email = $_GET['email'];
-    $password = 'Password1'; // Example password, usually this would be hashed
-    $isDisabled = 'false';
-    $role = 'trader';
-
-    updateUserCredentials($conn, $email, $password, $isDisabled, $role);
-    approveTraderRequests($conn, $email);
-
-    oci_close($conn);
-    echo "You have accepted this trader account.";
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Trader Confirmation</title>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Admin Dashboard</h1>
-        </div>
-        <div class="main-content">
-            <p class="status-message">You have accepted this trader account.</p>
-            <a href="dashboard.php" class="button">Return to Dashboard</a>
-        </div>
-    </div>
-</body>
-</html>
