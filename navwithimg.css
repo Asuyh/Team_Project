@@ -1,0 +1,83 @@
+/* index.css */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.page {
+    width: 100%;
+    min-height: 100vh;
+}
+
+.container {
+    width: 90%;
+    margin: 0 auto;
+}
+
+.page__body {
+    padding: 20px 0;
+}
+
+/* Navbar styles */
+.navbar {
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+/* Banner styles */
+.banner {
+    background-image: url('path/to/your/banner-image.jpg');
+    background-size: cover;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+}
+
+/* Section styles */
+.section {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.section h2 {
+    font-size: 24px;
+}
+
+/* Footer styles */
+.footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Additional classes for customization */
+.ad-section {
+    background-color: #eee;
+    padding: 20px;
+    text-align: center;
+}
+
+.best-sellers {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+.best-sellers .product {
+    background: white;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
